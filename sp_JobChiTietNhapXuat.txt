@@ -1,0 +1,105 @@
+Create PROC [dbo].[sp_JobChiTietNhapXuat]
+@ROLE NCHAR(10),
+@TYPE NVARCHAR(4),
+@dateFrom DATE,
+@dateTo DATE
+AS
+BEGIN
+	
+	DECLARE @dateFromString VARCHAR(10) = CAST(@dateFrom AS VARCHAR(10))
+    DECLARE @dateToString VARCHAR(10) = CAST(@dateTo AS VARCHAR(10))
+	SET NOCOUNT ON
+	IF(1=0)
+	BEGIN
+		SET FMTONLY OFF
+	END
+
+	IF OBJECT_ID('tempdb..##currentSite') IS NOT NULL
+	BEGIN
+		DROP TABLE ##currentSite;
+	END
+
+	CREATE TABLE ##currentSite(
+		THANGNAM NCHAR(10),
+		TENVT NVARCHAR(100),
+		SOLUONG INT, 
+		TRIGIA FLOAT
+	)
+
+	IF(@ROLE = N'CONGTY')
+	BEGIN
+		Set xact_abort on
+		begin distributed transaction  
+
+		IF OBJECT_ID('tempdb..##remoteSite') IS NOT NULL
+		BEGIN
+			DROP TABLE ##remoteSite;
+		END
+
+		CREATE TABLE ##remoteSite (
+			THANGNAM NCHAR(10),
+			TENVT NVARCHAR(100),
+			SOLUONG INT, 
+			TRIGIA FLOAT
+		)
+
+		DECLARE @truyvan nvarchar(1000)
+SET @truyvan = 'INSERT INTO ##currentSite(THANGNAM, TENVT, SOLUONG, TRIGIA) EXEC [dbo].[sp_ChiTietNhapXuatCongTy] ' + @TYPE + ', ''' + @dateFromString + ''', ''' + @dateToString + ''''
+
+		IF  EXISTS (SELECT job_id FROM msdb.dbo.sysjobs_view WHERE name = N'CT_Nhap_Xuat')
+		BEGIN
+			EXEC msdb.dbo.sp_delete_job @job_name = N'CT_Nhap_Xuat' 
+		END
+    
+		execute msdb.dbo.sp_add_job @job_name = N'CT_Nhap_Xuat', @start_step_id = 1
+		EXECUTE msdb.dbo.sp_add_jobserver  @job_name = N'CT_Nhap_Xuat', @server_name =  @@SERVERNAME
+		execute msdb.dbo.sp_add_jobstep  @job_name =  N'CT_Nhap_Xuat' , @step_id = 1, @step_name = 'NhapXuat', 
+											@command =  @truyvan,   @server = @@SERVERNAME, @database_name = 'QLVT'
+		execute msdb.dbo.sp_start_job    @job_name =  N'CT_Nhap_Xuat'
+		
+		INSERT INTO ##remoteSite
+		EXEC LINK1.QLVT.DBO.sp_ChiTietNhapXuatCongTy @type , @dateFrom, @dateTo
+
+		commit transaction;		
+
+		Declare  @jobStatus int;
+		While 1=1
+		begin
+		SELECT TOP 1 @jobStatus = run_status 
+			FROM msdb.dbo.sysjobhistory 
+			WHERE job_id = (SELECT job_id FROM msdb.dbo.sysjobs WHERE step_name='NhapXuat' and name = N'CT_Nhap_Xuat') 
+		--ORDER BY run_date DESC, run_time DESC;
+		IF @jobStatus IN (1, 0, 3) -- job completed (succeeded, failed, or canceled)
+			BREAK;
+		ELSE 
+			WAITFOR DELAY '00:00:02'; 
+		end
+
+		MERGE INTO ##currentSite AS target
+		USING ##remoteSite AS source
+		ON target.THANGNAM = source.THANGNAM AND target.TENVT = source.TENVT
+		WHEN MATCHED THEN
+			UPDATE
+			SET target.SOLUONG = target.SOLUONG + source.SOLUONG,
+				target.TRIGIA = target.TRIGIA + source.TRIGIA
+		WHEN NOT MATCHED BY TARGET THEN
+			INSERT (THANGNAM, TENVT, SOLUONG, TRIGIA)
+			VALUES (source.THANGNAM, source.TENVT, source.SOLUONG, source.TRIGIA);
+
+		SELECT * FROM ##currentSite
+
+		IF  EXISTS (SELECT job_id FROM msdb.dbo.sysjobs_view WHERE name = N'CT_Nhap_Xuat')
+		BEGIN
+			EXEC msdb.dbo.sp_delete_job @job_name = N'CT_Nhap_Xuat' 
+		END
+	END
+	ELSE
+	BEGIN
+		INSERT INTO ##currentSite
+		EXEC sp_ChiTietNhapXuatCongTy @type, @dateFrom, @dateTo
+		SELECT * FROM ##currentSite
+	END
+
+	
+
+END

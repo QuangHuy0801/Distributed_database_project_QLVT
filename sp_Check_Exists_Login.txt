@@ -1,0 +1,6 @@
+create PROCEDURE [dbo].[sp_Check_Exists_Login] (@loginname nvarchar(30))
+as
+begin
+	if exists(select * from sys.syslogins where loginname = @loginname) return 1
+	return 0
+end

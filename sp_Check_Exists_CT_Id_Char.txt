@@ -1,0 +1,11 @@
+create PROCEDURE [dbo].[sp_Check_Exists_CT_Id_Char] (@tablename nvarchar(10),@column1 nvarchar(20), @checkchar1 nvarchar(20), @column2 nvarchar(20), @checkchar2 nvarchar(20))
+as
+begin
+	declare @sql nvarchar(300)
+	
+	set @sql = 'declare @count int = 0 '
+	         + 'if exists(select * from '+@tablename+'  where ' + @column1 +'= ''' +  @checkchar1 + ''' and ' + @column2+'= ''' +  @checkchar2 + ''') set @count = 1  '+ 
+			 + ' select @count'
+	print(@sql)
+    exec(@sql)
+end

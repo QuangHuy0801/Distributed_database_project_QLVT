@@ -1,0 +1,8 @@
+create PROCEDURE [dbo].[sp_CheckNhanVienTonTai] 
+@manv int
+as
+begin
+	if exists(select * from LINK2.QLVT.DBO.NhanVien where MANV = @manv)
+	return 1
+	return 0
+end

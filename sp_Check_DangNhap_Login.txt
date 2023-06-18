@@ -1,0 +1,9 @@
+create PROCEDURE [dbo].[sp_Check_DangNhap_Login] (@loginname nvarchar(30))
+as
+begin
+	if not exists(select * from sys.syslogins where loginname = @loginname) return 1
+	declare @username nvarchar(100)
+	SELECT @username = NAME FROM SYS.sysusers WHERE SID = SUSER_SID(@loginname)
+	if ISNUMERIC(@username) = 0 return 1
+	return 0
+end

@@ -1,0 +1,7 @@
+
+create PROCEDURE [dbo].[sp_Xem_Danh_Muc_Vat_Tu]
+as
+begin
+	select MAVT,TENVT,DVT,SOLUONGTON from LINK0.QLVT.dbo.VatTu
+	order by TenVT asc
+end

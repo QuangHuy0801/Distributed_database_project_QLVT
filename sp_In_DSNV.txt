@@ -1,0 +1,6 @@
+create PROCEDURE [dbo].[sp_In_DSNV]
+as
+begin
+	select * from NhanVien
+	order by TEN, HO
+end

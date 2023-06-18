@@ -1,0 +1,10 @@
+create proc [dbo].[sp_Drop_Account] (@loginname nvarchar(30), @rolename nvarchar(20), @manv int)
+as
+begin
+    declare @query nvarchar(250)
+	set @query = 'exec sp_droprolemember ['+ @rolename + '] , [' +  cast(@manv as nvarchar(5)) +']'  
+	+ '  drop user [' + cast(@manv as nvarchar(5)) +']'
+	+ '  drop login [' + @loginname + ']'
+	print(@query)
+	exec(@query)
+end

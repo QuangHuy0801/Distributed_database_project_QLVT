@@ -1,0 +1,14 @@
+create proc [dbo].[SP_Lay_Thong_Tin_NV_Tu_Login]   
+@TENLOGIN NVARCHAR(20) -- dong bo
+AS
+DECLARE @UID INT
+DECLARE @MANV INT
+SELECT @UID = uid, @MANV = NAME FROM SYS.sysusers
+  WHERE SID = SUSER_SID(@TENLOGIN)
+
+SELECT MANV = @MANV,
+       HOTEN = (SELECT HO + ' ' +TEN FROM NhanVien WHERE MANV = @MANV),
+	   TENNHOM = NAME 
+	FROM SYS.sysusers
+	WHERE uid = (SELECT groupuid FROM SYS.sysmembers WHERE memberuid = @UID)
+

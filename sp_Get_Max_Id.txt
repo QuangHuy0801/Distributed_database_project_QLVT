@@ -1,0 +1,8 @@
+create proc [dbo].[sp_Get_Max_Id](@table nvarchar(20), @column nvarchar(20))
+as
+begin
+    DECLARE @sql AS VARCHAR(250)
+	set @sql = 'select max(temp.max) from (select max( ' + @column +' )as max from ' +@table+
+	           ' union select max( '+@column+' )as max from LINK1.QLVT.DBO. '+@table+' ) as temp'
+	exec(@sql)
+end

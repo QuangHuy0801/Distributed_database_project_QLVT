@@ -1,0 +1,9 @@
+
+create proc [dbo].[sp_CheckKhoTonTai] 
+@makho nvarchar(20)
+as
+begin
+	if exists(select * from LINK2.QLVT.DBO.KHO where MAKHO = @makho)
+	return 1
+	return 0
+end

@@ -1,0 +1,19 @@
+create proc [dbo].[sp_Create_Account] (@loginname nvarchar(30), @password nvarchar(30), @rolename nvarchar(20), @manv int)
+as
+begin
+    declare @query nvarchar(250)
+
+	set @query = 
+	'Begin try' +
+	+'   Begin tran ' +  
+	+ '  create login [' + @loginname +'] with password = ''' + @password  +   '''' 
+	+ '  create user [' + cast(@manv as nvarchar(5)) +'] for login ' + @loginname
+	+ '  alter role [' + @rolename + '] add member [' + cast(@manv as nvarchar(5)) + ']' 
+	+'   commit tran ' +
+	+'End try ' +
+	+'Begin catch' +
+	+ ' IF @@TRANCOUNT > 0 ROLLBACK TRAN '+
+	+'End catch'
+	print(@query)
+	exec(@query)
+end

@@ -1,0 +1,16 @@
+create PROCEDURE [dbo].[sp_KiemTraNgayNhap]
+@MasoDDH nChar(8),
+@NGAY nvarchar(10)
+AS
+BEGIN
+	declare @sql nvarchar(300)
+
+	set @sql = 'declare @count int = 0 '
+	         + 'if exists(select * from DatHang  where MasoDDH = ''' + @MasoDDH + ''' AND NGAY <= ''' +@NGAY + ''') set @count = 1  '+ 
+			 + ' select @count'
+	 print(@sql)
+    exec(@sql)
+		
+
+	
+END

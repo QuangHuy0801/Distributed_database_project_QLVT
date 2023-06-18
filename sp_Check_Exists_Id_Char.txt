@@ -1,0 +1,13 @@
+
+create PROCEDURE [dbo].[sp_Check_Exists_Id_Char] (@tablename nvarchar(10),@column nvarchar(20), @checkchar nvarchar(20))
+as
+begin
+	declare @sql nvarchar(300)
+	
+	set @sql = 'declare @count int = 0 '
+	         + 'if exists(select * from '+@tablename+'  where ' + @column +'= ''' +  @checkchar + ''') set @count = 1  '+ 
+	         + 'if exists(select * from LINK1.QLVT.DBO.'+@tablename+'  where ' + @column +'= '''+ @checkchar + ''') set @count = 1 ' 
+			 + ' select @count'
+	print(@sql)
+    exec(@sql)
+end

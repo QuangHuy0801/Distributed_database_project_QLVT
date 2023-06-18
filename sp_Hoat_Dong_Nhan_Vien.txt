@@ -1,0 +1,20 @@
+ALTER PROCEDURE [dbo].[sp_Hoat_Dong_Nhan_Vien] (@manv int, @batdau date, @ketthuc date)
+as
+begin
+
+drop table if exists #TEMPPN
+drop table if exists #TEMPPX
+select NGAY, MAPN as SOPHIEU, HOTENKH = '', LOAIPHIEU = N'Nhập' into #TEMPPN from PhieuNhap where NGAY >= @batdau and NGAY <= @ketthuc and MANV = @manv
+select NGAY, MAPX as SOPHIEU, HOTENKH, LOAIPHIEU = N'Xuất' into #TEMPPX from PhieuXuat where NGAY >= @batdau and NGAY <= @ketthuc and MANV = @manv
+
+select NGAY, SOPHIEU, LOAIPHIEU,HOTENKH, TENVT, SOLUONG, DONGIA, THANG =  CAST(MONTH(NGAY) AS varchar) + '/' + CAST(YEAR(NGAY) AS varchar(4)) from Vattu
+inner join
+(select NGAY, SOPHIEU,HOTENKH, LOAIPHIEU, MAVT, SOLUONG, DONGIA from CTPN
+INNER JOIN #TEMPPN
+ON #TEMPPN.SOPHIEU = CTPN.MAPN
+UNION
+select NGAY, SOPHIEU,HOTENKH, LOAIPHIEU, MAVT, SOLUONG, DONGIA from CTPX
+INNER JOIN #TEMPPX
+ON #TEMPPX.SOPHIEU = CTPX.MAPX) as TTPHIEU
+ON TTPHIEU.MAVT = Vattu.MAVT
+end

@@ -1,0 +1,9 @@
+Create proc [dbo].[sp_Alter_Account] (@loginnameold nvarchar(30), @loginname nvarchar(30), @password nvarchar(30))
+as
+begin
+	declare @query nvarchar(200)
+	set @query = 'alter login [' + @loginnameold +'] with  name = [' + @loginname + ']'  
+	+ ' , password = ''' + @password  +   '''' 
+	print(@query)
+	exec(@query)
+end
