@@ -1,0 +1,12 @@
+﻿<?xml version='1.0' encoding='UTF-8'?>
+<svg x="0px" y="0px" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" enable-background="new 0 0 32 32" xml:space="preserve" id="Layer_1">
+  <style type="text/css">
+	.Blue{fill:#1177D7;}
+</style>
+  <path d="M13,10H1c-0.6,0-1-0.4-1-1V3c0-0.6,0.4-1,1-1h12c0.6,0,1,0.4,1,1v6C14,9.6,13.6,10,13,10z" fill="#1177D7" class="Blue" />
+  <path d="M29,10H17c-0.6,0-1-0.4-1-1V3c0-0.6,0.4-1,1-1h12c0.6,0,1,0.4,1,1v6C30,9.6,29.6,10,29,10z" fill="#1177D7" class="Blue" />
+  <path d="M13,20H1c-0.6,0-1-0.4-1-1v-6c0-0.6,0.4-1,1-1h12c0.6,0,1,0.4,1,1v6C14,19.6,13.6,20,13,20z" fill="#1177D7" class="Blue" />
+  <path d="M29,20H17c-0.6,0-1-0.4-1-1v-6c0-0.6,0.4-1,1-1h12c0.6,0,1,0.4,1,1v6C30,19.6,29.6,20,29,20z" fill="#1177D7" class="Blue" />
+  <path d="M13,30H1c-0.6,0-1-0.4-1-1v-6c0-0.6,0.4-1,1-1h12c0.6,0,1,0.4,1,1v6C14,29.6,13.6,30,13,30z" fill="#1177D7" class="Blue" />
+  <path d="M29,30H17c-0.6,0-1-0.4-1-1v-6c0-0.6,0.4-1,1-1h12c0.6,0,1,0.4,1,1v6C30,29.6,29.6,30,29,30z" fill="#1177D7" class="Blue" />
+</svg>
